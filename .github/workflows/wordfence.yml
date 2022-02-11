@@ -1,0 +1,33 @@
+name: Mirror WordFence
+
+# Controls when the workflow will run
+on:
+  schedule:
+    - cron: "30 0 * * *" # Run this sync once per day.
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  mirror:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Checkout Wordfence from WordPress SVN repo
+        run: svn co https://plugins.svn.wordpress.org/wordfence/ wordfence-svn
+      
+      - name: Generate users.txt file
+        run: |
+          cd wordfence-svn
+          svn log -q | awk -F '|' '/^r/ {gsub(/ /, "", $2); sub(" $", "", $2); print $2" = "$2" <"$2">"}' | sort -u > ../users.txt
+          cd ..
+      
+      - name: Create Git clone of SVN repository
+        run: git svn clone --stdlayout --authors-file=users.txt https://plugins.svn.wordpress.org/wordfence/ wordfence-git
+        
+      - name: Add Github as remote
+        run: |
+          cd wordfence-git
+          git remote add github git@github.com:wp-plugins-mirror/wordfence.git
+          git push --force --all --repo github
