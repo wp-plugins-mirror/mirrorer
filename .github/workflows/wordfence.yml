@@ -23,7 +23,12 @@ jobs:
           cd wordfence-svn
           svn log -q | awk -F '|' '/^r/ {gsub(/ /, "", $2); sub(" $", "", $2); print $2" = "$2" <"$2">"}' | sort -u > ../users.txt
           cd ..
-      
+          
+      - name: Install git-svn
+        run: |
+          sudo apt-get update
+          sudo apt-get install git-svn
+          
       - name: Create Git clone of SVN repository
         run: git svn clone --stdlayout --authors-file=users.txt https://plugins.svn.wordpress.org/wordfence/ wordfence-git
         
