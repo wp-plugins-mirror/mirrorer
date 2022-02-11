@@ -32,7 +32,7 @@ jobs:
           cd ..
           
       - name: Create Git clone of SVN repository
-        run: git svn clone --stdlayout --authors-file=users.txt https://plugins.svn.wordpress.org/wordfence/ wordfence-git
+        run: git svn clone --no-minimize-url --stdlayout --authors-file=users.txt https://plugins.svn.wordpress.org/wordfence/ wordfence-git
         
       - name: Push clone to Github
         run: |
