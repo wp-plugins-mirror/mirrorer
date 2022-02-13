@@ -35,7 +35,9 @@ jobs:
         run: git svn clone --no-minimize-url --stdlayout -r433177:HEAD --authors-file=users.txt https://plugins.svn.wordpress.org/wordfence/ wordfence-git
         
       - name: Push clone to Github
+        env: 
+          GH_DEPLOY_KEY: ${{ secrets.GH_DEPLOY_KEY }}
         run: |
           cd wordfence-git
-          git remote add github git@github.com:wp-plugins-mirror/wordfence.git
+          git remote add github https://anubisthejackle:$GH_DEPLOY_KEY@github.com/wp-plugins-mirror/wordfence.git
           git push --force --all --repo github
